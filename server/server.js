@@ -13,9 +13,15 @@ app.use(morgan('dev'))
 app.use(express.static('client'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+
 // this is called mounting. when ever a req comes in for
 // '/lion' we want to use this router
 app.use('/lions', lionRouter);
+
+
+// use the tiger router for tigers
+app.use('/tigers', tigerRouter);
+
 
 app.use(function(err, req, res, next) {
   if (err) {
