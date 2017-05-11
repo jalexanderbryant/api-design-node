@@ -20,6 +20,11 @@ var id = 0;
 
 var updateId = function(req, res, next) {
   // fill this out. this is the route middleware for the ids
+  return (function()
+  {
+    req.body['id'] = id+=1;
+    next();
+  })();
 };
 
 app.use(morgan('dev'))
@@ -28,12 +33,28 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 
+
 app.param('id', function(req, res, next, id) {
   // fill this out to find the lion based off the id
   // and attach it to req.lion. Rember to call next()
+  return( function(){
+    var lion = _.find(lions, { id: req.params.id });
+    req.lion = lion;
+    next();
+  })();
+
+  // Alternative solution
+  // var lion = _.find(lions, { id: req.params.id });
+  // if(lion){
+  //   req.lion = lion;
+  //   next();
+  // } else {
+  //   res.send();
+  // }
 });
 
 app.get('/lions', function(req, res){
+  console.log("test id from lions: ", req.body)
   res.json(lions);
 });
 
@@ -64,6 +85,11 @@ app.put('/lions/:id', function(req, res) {
     var updatedLion = _.assign(lions[lion], update);
     res.json(updatedLion);
   }
+});
+
+app.use(function(err, req, res, next){
+  console.log(err.stack);
+  res.status(500).send('Something went wrong.');
 });
 
 app.listen(3000);
